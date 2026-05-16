@@ -26,8 +26,8 @@ CCSbase2 aggregates across the 5 different datasets listed below. AllCCS was obt
 - [CCSBase](https://ccsbase.net/)
 - [PNNL](https://pnnl-comp-mass-spec.github.io/MetabolomicsCCS/)
 - [ALLCCS](http://allccs.zhulab.cn/database/browser)
-- [METLIN](https://www.dropbox.com/scl/fi/9xctm5ub834muw1qrvd5b/CCS-Publication-V3.zip?e=2&file_subpath=%2FCCS-Publication-V3&rlkey=zi9xaua4zzgpiiaznexabpg7i&dl=0)
-- [ACS Publication](https://pubs.acs.org/doi/10.1021/acs.jafc.2c00724)
+- [METLIN-CCS](https://www.dropbox.com/scl/fi/9xctm5ub834muw1qrvd5b/CCS-Publication-V3.zip?e=2&file_subpath=%2FCCS-Publication-V3&rlkey=zi9xaua4zzgpiiaznexabpg7i&dl=0)
+- [Dataset found from ACS publication](https://pubs.acs.org/doi/10.1021/acs.jafc.2c00724)
 
 
 #### [Download Prebuilt Database](https://drive.google.com/file/d/1NQy1ZcuRwRlZv2scIgqvrvsFDLFhEewx/view?usp=sharing)
