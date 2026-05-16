@@ -1,0 +1,6 @@
+libxrender1
+libxext6
+libcairo2
+libfontconfig1
+libsm6
+libice6
