@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from rdkit import Chem
 from rdkit.Chem import rdFingerprintGenerator, rdMolDescriptors
 from rdkit.Chem.Draw import rdMolDraw2D
@@ -18,8 +19,41 @@ from PIL import Image
 st.set_page_config(layout="wide", page_title="CCS Fingerprint Explorer", page_icon="🧪")
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-DB_PATH    = "ccsbase2/CCSMLDatabase.db"
-MODEL_PATH = "ccsbase2/ccsbase2.joblib"
+_APP_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _APP_DIR.parent
+
+
+def _resolve_existing_file(description: str, candidates: tuple[Path, ...]) -> str:
+    """Pick first existing path (Streamlit Cloud cwd varies; assets may live in several layouts)."""
+    for path in candidates:
+        if path.is_file():
+            return str(path)
+    lines = "\n  ".join(str(p) for p in candidates)
+    raise FileNotFoundError(
+        f"{description} not found. Checked:\n  {lines}\n"
+        "Add ccsbase2.joblib and CCSMLDatabase.db to the deployed repo "
+        "(README download links). If they are listed in .gitignore, remove those "
+        "entries or place copies Streamlit can clone."
+    )
+
+
+DB_PATH = _resolve_existing_file(
+    "CCSMLDatabase.db",
+    (
+        _REPO_ROOT / "ccsbase2" / "CCSMLDatabase.db",
+        _REPO_ROOT / "datasets" / "CCSMLDatabase.db",
+        _REPO_ROOT / "CCSMLDatabase.db",
+        _APP_DIR / "CCSMLDatabase.db",
+    ),
+)
+MODEL_PATH = _resolve_existing_file(
+    "ccsbase2.joblib",
+    (
+        _REPO_ROOT / "ccsbase2" / "ccsbase2.joblib",
+        _REPO_ROOT / "ccsbase2.joblib",
+        _APP_DIR / "ccsbase2.joblib",
+    ),
+)
 IMG_W, IMG_H = 400, 350
 WATERFALL_W  = 500
 PAGE_SIZE    = 5
