@@ -67,9 +67,29 @@ BIT_COLORS = [
 ]
 BIT_COLOR_HEX = ["#F24040", "#3399F2", "#27BF4D", "#F28C0D", "#B326D9"]
 
+
+class _BoosterWrapper:
+    """Minimal stand-in for pickled sklearn XGBRegressor (only get_booster() is used)."""
+
+    __slots__ = ("_booster",)
+
+    def __init__(self, booster: xgb.Booster):
+        self._booster = booster
+
+    def get_booster(self):
+        return self._booster
+
+
 # ── Cached loaders ─────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_model():
+    """Prefer ccsbase2.json beside the joblib if present (avoids XGBoost pickle warnings)."""
+    joblib_path = Path(MODEL_PATH)
+    native_path = joblib_path.with_suffix(".json")
+    if native_path.is_file():
+        booster = xgb.Booster()
+        booster.load_model(str(native_path))
+        return _BoosterWrapper(booster)
     return joblib.load(MODEL_PATH)
 
 @st.cache_data
@@ -247,13 +267,13 @@ feature_names = (
 # ── Left sidebar ───────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🔬 Subclass")
-    st.caption("Ranked by dataset size. Select one and click Apply.")
+    st.caption("Select a subclass below, then click Apply above.")
     subclass_labels = [
         f"{row['subclass']}  ({int(row['cnt'])})"
         for _, row in df_counts.iterrows()
     ]
-    selected_label = st.radio("Subclass", subclass_labels, label_visibility="collapsed")
     apply_subclass = st.button("▶  Apply Subclass", use_container_width=True)
+    selected_label = st.radio("Subclass", subclass_labels, label_visibility="collapsed")
 
 selected_subclass = selected_label.rsplit("  (", 1)[0]
 
