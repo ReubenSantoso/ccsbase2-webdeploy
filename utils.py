@@ -91,6 +91,39 @@ class Utils:
         print(len(test_df), "test rows")
 
     def calculate_descriptors(self, smiles: str, ion_mass: float, charge: int, adducts: list, adduct: str):
+        """
+        Calculate molecular descriptors for CCS prediction.
+
+        Parameters
+        ----------
+        smiles : str
+            SMILES string of the molecule.
+        ion_mass : float
+            Observed ion mass (m/z * charge).
+        charge : int
+            Ion charge state (z).
+        adducts : list
+            List of known adduct types (sorted, with count >= 100 in training data).
+        adduct : str
+            Adduct type for this molecule.
+
+        Returns
+        -------
+        np.ndarray
+            Feature vector with the following structure:
+
+            Index       | Feature Name      | Description
+            ------------|-------------------|------------------------------------------
+            0           | MolecularWeight   | Exact molecular weight (RDKit CalcExactMolWt)
+            1           | AdductMass        | ion_mass - MolecularWeight
+            2           | Charge            | Ion charge state (z)
+            3           | LabuteASA         | Labute accessible surface area
+            4 to 4+N    | Adduct_<name>     | One-hot encoding for each adduct in list (N = len(adducts))
+            4+N         | Adduct_Other      | One-hot flag for unknown adducts
+            4+N+1 to end| MorganFP_0..1023  | Morgan count fingerprint (radius=2, 1024 bits, with chirality)
+
+            Total length: 4 + len(adducts) + 1 + 1024
+        """
         mol = Chem.MolFromSmiles(smiles)
         mol = Chem.AddHs(mol)
 
